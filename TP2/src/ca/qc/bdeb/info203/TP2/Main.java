@@ -18,6 +18,7 @@ public class Main {
         System.out.println("f");
         System.out.println("d");
         System.out.println("wow");
+        System.out.println("Bonjour");
     }
     
 }
