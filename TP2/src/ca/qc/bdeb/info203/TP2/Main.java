@@ -15,10 +15,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println("f");
-        System.out.println("d");
-        System.out.println("wow");
-        System.out.println("Bonjour");
+        Fenetre fenetre = new Fenetre();
     }
     
 }
