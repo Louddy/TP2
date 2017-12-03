@@ -20,7 +20,7 @@ public class Heros extends JComponent implements Runnable {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(10);
+                Thread.sleep(2);
                 bouger(this.getParent().getHeight(), this.getParent().getWidth(),
                         directionCourante);
             } catch (InterruptedException ex) {
@@ -37,6 +37,7 @@ public class Heros extends JComponent implements Runnable {
     }
     private Image img;
     private Directions directionCourante;
+    private Directions blocage = null;
     private final Image imgHaut;
     private final Image imgBas;
     private final Image imgDroite;
@@ -45,6 +46,7 @@ public class Heros extends JComponent implements Runnable {
     private final Image imgBasImmobile;
     private final Image imgDroiteImmobile;
     private final Image imgGaucheImmobile;
+    private final int DEPLACEMENT = 1;
 
     public Heros() {
         final Toolkit tk = Toolkit.getDefaultToolkit();
@@ -60,30 +62,42 @@ public class Heros extends JComponent implements Runnable {
     }
 
     public void bouger(int hauteur, int largeur, Directions direction) {
-        switch (direction) {
-            case HAUT:
-                if (getY() > 0) {
-                    setLocation(getX(), getY() - 5);
-                }
-                img = imgHaut;
-                break;
-            case BAS:
-                if (getY() + getHeight() < hauteur) {
-                    setLocation(getX(), getY() + 5);
-                }
-                img = imgBas;
-                break;
-            case DROITE:
-                if (getX() + getWidth() < largeur) {
-                    setLocation(getX() + 5, getY());
-                }
-                img = imgDroite;
-                break;
-            case GAUCHE:
-                if (getX() > 0) {
-                    setLocation(getX() - 5, getY());
-                }
-                img = imgGauche;
+        Monde monde = (Monde) getParent();
+        boolean passe = ((direction == Directions.HAUT && blocage == Directions.BAS) ||
+                (direction == Directions.BAS && blocage == Directions.HAUT) ||
+                (direction == Directions.DROITE && blocage == Directions.GAUCHE) ||
+                (direction == Directions.GAUCHE && blocage == Directions.DROITE));
+        if ((passe) || !monde.verifierContact()) {
+            switch (direction) {
+                case HAUT:
+                    if (getY() > 0) {
+                        setLocation(getX(), getY() - DEPLACEMENT);
+                    } 
+                    img = imgHaut;
+                    break;
+                case BAS:
+                    if (getY() + getHeight() < hauteur) {
+                        setLocation(getX(), getY() + DEPLACEMENT);
+                    }
+                    img = imgBas;
+                    break;
+                case DROITE:
+                    if (getX() + getWidth() < largeur) {
+                        setLocation(getX() + DEPLACEMENT, getY());
+                    }
+                    img = imgDroite;
+                    break;
+                case GAUCHE:
+                    if (getX() > 0) {
+                        setLocation(getX() - DEPLACEMENT, getY());
+                    }
+                    img = imgGauche;
+            }
+        } else if (blocage == null && monde.verifierContact()) {
+            blocage = direction;
+        }
+        if (blocage != null && !monde.verifierContact()) {
+            blocage = null;
         }
     }
 
