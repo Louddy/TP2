@@ -5,8 +5,6 @@
  */
 package ca.qc.bdeb.info203.TP2;
 
-import Vue.Fenetre;
-
 /**
  *
  * @author 1651693
