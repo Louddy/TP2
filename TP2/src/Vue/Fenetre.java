@@ -5,9 +5,6 @@
  */
 package Vue;
 
-
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Observable;
@@ -21,21 +18,8 @@ import javax.swing.JMenuItem;
  *
  * @author Xavie
  */
-public class Fenetre extends JFrame implements Observer{
-    /*private class Dispatcher implements KeyEventDispatcher {
-        @Override
-        public boolean dispatchKeyEvent(KeyEvent e) {
-            if (e.getID() == KeyEvent.KEY_PRESSED) {
-                
-            } else if (e.getID() == KeyEvent.KEY_RELEASED) {
-                System.out.println("2test2");
-            } else if (e.getID() == KeyEvent.KEY_TYPED) {
-                System.out.println("3test3");
-            }
-            return false;
-        }
-    }*/
-    
+public class Fenetre extends JFrame implements Observer {
+
     final static int HAUTEUR = 596;
     final static int LARGEUR = 806;
 
@@ -50,9 +34,7 @@ public class Fenetre extends JFrame implements Observer{
     private Monde monde = new Monde();
 
     public Fenetre() {
-        /*KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-        manager.addKeyEventDispatcher(new Dispatcher());*/
-        
+
         setTitle("Jeux");
         setSize(LARGEUR, HAUTEUR);
 
@@ -69,15 +51,32 @@ public class Fenetre extends JFrame implements Observer{
         this.setJMenuBar(mnuPrincipal);
 
         addKeyListener(new KeyAdapter() {
+            private boolean fired = false;
+
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    monde.monterHeros();
-                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    
+                if (!fired) {
+                    if (e.getKeyCode() == KeyEvent.VK_UP) {
+                        monde.bougerHeros(Heros.Directions.HAUT);
+                    } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                        monde.bougerHeros(Heros.Directions.BAS);
+                    } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                        monde.bougerHeros(Heros.Directions.DROITE);
+                    } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                        monde.bougerHeros(Heros.Directions.GAUCHE);
+                    }
+                    fired = true;
+                    System.out.println("Pouf");
                 }
             }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                monde.arreterHeros();
+                fired = false;
+            }
         });
+
         //Jeu
         //Sauce
         this.add(monde);
@@ -85,9 +84,9 @@ public class Fenetre extends JFrame implements Observer{
         setResizable(false);
         setVisible(true);
     }
-    
+
     @Override
     public void update(Observable o, Object arg) {
-        
+
     }
 }

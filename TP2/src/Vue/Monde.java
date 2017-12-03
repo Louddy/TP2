@@ -5,6 +5,7 @@
  */
 package Vue;
 
+import Vue.Heros.Directions;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -19,10 +20,11 @@ import javax.swing.JPanel;
  * @author Olivier Hurtubise
  */
 public class Monde extends JPanel {
-    
+
+    private Thread threadBouger;
     private BufferedImage floor;
     private Heros heros;
-    
+
     public Monde() {
         this.setLayout(new BorderLayout());
         try {
@@ -34,7 +36,7 @@ public class Monde extends JPanel {
         placerHeros();
         this.setLayout(null);
     }
-    
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -47,7 +49,7 @@ public class Monde extends JPanel {
 
     private void placerElements() {
         Random rand = new Random();
-        Entite entite;
+        Obstacle entite;
         for (int i = 0; i < 25; i++) {
             for (int j = 0; j < 17; j++) {
                 if ((j == 0 || j == 16) && (i < 9 || i > 15)) {
@@ -63,22 +65,29 @@ public class Monde extends JPanel {
                     entite = new Buisson();
                     entite.setBounds(i * 32, j * 32, 32, 32);
                     this.add(entite);
-                } 
+                }
             }
         }
     }
-    
+
     private void placerHeros() {
         heros = new Heros();
-        heros.setBounds(16*32, 8*32, 22, 51);
+        heros.setBounds(16 * 32, 8 * 32, 22, 51);
         this.add(heros);
     }
-    
-    public void monterHeros() {
-        heros.bouger(this.getHeight(), this.getWidth(), Heros.Directions.HAUT);
+
+    public void bougerHeros(Directions direction) {
+        heros.setDirectionCourante(direction);
+        threadBouger = new Thread(heros);
+        threadBouger.start();
     }
-    
+
+    public void arreterHeros() {
+        threadBouger.interrupt();
+        heros.arreter();
+    }
+
     private void majJeu() {
-        
+
     }
 }

@@ -16,10 +16,10 @@ import javax.swing.JComponent;
  *
  * @author Olivier Hurtubise
  */
-public abstract class Entite extends JComponent {
+public abstract class Obstacle extends JComponent {
     private BufferedImage obstacle;
 
-    public Entite(File fichier) {
+    public Obstacle(File fichier) {
         try {
             obstacle = ImageIO.read(fichier);
         } catch (IOException e) {

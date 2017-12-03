@@ -11,7 +11,7 @@ import java.io.File;
  *
  * @author Olivier Hurtubise
  */
-public class Roche extends Entite {
+public class Roche extends Obstacle {
     private final static File fichier  = new File("Images\\roche1.gif");
     public Roche () {
         super(fichier);

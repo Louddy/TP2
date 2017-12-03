@@ -8,14 +8,26 @@ package Vue;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.File;
-import java.io.IOException;
+import javax.swing.JComponent;
 
 /**
  *
  * @author Olivier Hurtubise
  */
-public class Heros extends Entite {
+public class Heros extends JComponent implements Runnable {
+
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                Thread.sleep(10);
+                bouger(this.getParent().getHeight(), this.getParent().getWidth(),
+                        directionCourante);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
 
     public enum Directions {
         HAUT,
@@ -24,23 +36,27 @@ public class Heros extends Entite {
         GAUCHE;
     }
     private Image img;
+    private Directions directionCourante;
     private final Image imgHaut;
     private final Image imgBas;
     private final Image imgDroite;
     private final Image imgGauche;
-    private static final File fichier = new File("Images\\herofront.gif");
+    private final Image imgHautImmobile;
+    private final Image imgBasImmobile;
+    private final Image imgDroiteImmobile;
+    private final Image imgGaucheImmobile;
 
     public Heros() {
-        super(fichier);
         final Toolkit tk = Toolkit.getDefaultToolkit();
         imgHaut = tk.getImage("Images\\heroback.gif");
         imgBas = tk.getImage("Images\\herofront.gif");
-        imgDroite = tk.getImage("Image\\herodroite.gif");
-        imgGauche = tk.getImage("Image\\herogauche.gif");
-        /*tk.prepareImage(imgHaut, 22, 51, this);
-        tk.prepareImage(imgBas, 22, 51, this);
-        tk.prepareImage(imgDroite, 22, 51, this);
-        tk.prepareImage(imgGauche, 22, 51, this);*/
+        imgDroite = tk.getImage("Images\\herodroite.gif");
+        imgGauche = tk.getImage("Images\\herogauche.gif");
+        imgHautImmobile = tk.getImage("Images\\backimmobile.gif");
+        imgBasImmobile = tk.getImage("Images\\frontimmobile.gif");
+        imgDroiteImmobile = tk.getImage("Images\\droiteimmobile.gif");
+        imgGaucheImmobile = tk.getImage("Images\\gaucheimmobile.gif");
+        img = imgBasImmobile;
     }
 
     public void bouger(int hauteur, int largeur, Directions direction) {
@@ -53,32 +69,47 @@ public class Heros extends Entite {
                 break;
             case BAS:
                 if (getY() + getHeight() < hauteur) {
-                    setLocation(getX(), getY() + 1);
+                    setLocation(getX(), getY() + 5);
                 }
                 img = imgBas;
                 break;
             case DROITE:
                 if (getX() + getWidth() < largeur) {
-                    setLocation(getX() + 1, getY());
+                    setLocation(getX() + 5, getY());
                 }
                 img = imgDroite;
                 break;
             case GAUCHE:
                 if (getX() > 0) {
-                    setLocation(getX() - 1, getY());
+                    setLocation(getX() - 5, getY());
                 }
                 img = imgGauche;
         }
-        invalidate();
-        repaint();
+    }
+
+    public void arreter() {
+        switch (directionCourante) {
+            case HAUT:
+                img = imgHautImmobile;
+                break;
+            case BAS:
+                img = imgBasImmobile;
+                break;
+            case DROITE:
+                img = imgDroiteImmobile;
+                break;
+            case GAUCHE:
+                img = imgGaucheImmobile;
+        }
+    }
+
+    public void setDirectionCourante(Directions direction) {
+        directionCourante = direction;
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(img, 22, 51, this);
-    }
-    public Image getImage() {
-        return img;
+        g.drawImage(img, 0, 0, this);
     }
 }
