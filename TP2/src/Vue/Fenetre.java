@@ -66,7 +66,6 @@ public class Fenetre extends JFrame implements Observer {
                         monde.bougerHeros(Heros.Directions.GAUCHE);
                     }
                     fired = true;
-                    System.out.println("Pouf");
                 }
             }
 
