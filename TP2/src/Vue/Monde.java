@@ -11,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -24,14 +25,15 @@ public class Monde extends JPanel {
     private Thread threadBouger;
     private BufferedImage floor;
     private Heros heros;
+    private ArrayList<Obstacle> listeObstacles;
 
     public Monde() {
-        this.setLayout(new BorderLayout());
         try {
             floor = ImageIO.read(new File("Images\\floor2.gif"));
         } catch (IOException e) {
             System.out.println("Erreur IO");
         }
+        listeObstacles = new ArrayList<Obstacle>();
         placerElements();
         placerHeros();
         this.setLayout(null);
@@ -56,15 +58,18 @@ public class Monde extends JPanel {
                     entite = new Roche();
                     entite.setBounds(i * 32, j * 32, 32, 32);
                     this.add(entite);
+                    listeObstacles.add(entite);
                 } else if ((j < 5 || j > 11) && (i == 0 || i == 24)) {
                     entite = new Roche();
                     entite.setBounds(i * 32, j * 32, 32, 32);
                     this.add(entite);
+                    listeObstacles.add(entite);
                 } else if (j > 0 && j < 17 && i > 0 && i < 25
                         && rand.nextInt(100) == 3 && i != 16 && j != 8) {
                     entite = new Buisson();
                     entite.setBounds(i * 32, j * 32, 32, 32);
                     this.add(entite);
+                    listeObstacles.add(entite);
                 }
             }
         }
@@ -86,8 +91,13 @@ public class Monde extends JPanel {
         threadBouger.interrupt();
         heros.arreter();
     }
-
-    private void majJeu() {
-
+    
+    public boolean verifierContact() {
+        for(Obstacle obstacle: listeObstacles) {
+            if(obstacle.getBounds().intersects(heros.getBounds())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
