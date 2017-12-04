@@ -83,7 +83,20 @@ public class Monde extends JPanel {
 
     public void bougerHeros(Directions direction) {
         heros.setDirectionCourante(direction);
-        threadBouger = new Thread(heros);
+        threadBouger = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(2);
+                        heros.bouger(getHeight(), getWidth(),
+                                heros.getDirectionCourante());
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+        };
         threadBouger.start();
     }
 
@@ -91,10 +104,10 @@ public class Monde extends JPanel {
         threadBouger.interrupt();
         heros.arreter();
     }
-    
+
     public boolean verifierContact() {
-        for(Obstacle obstacle: listeObstacles) {
-            if(obstacle.getBounds().intersects(heros.getBounds())) {
+        for (Obstacle obstacle : listeObstacles) {
+            if (obstacle.getBounds().intersects(heros.getBounds())) {
                 return true;
             }
         }
