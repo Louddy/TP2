@@ -8,15 +8,16 @@ package Vue;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.util.ArrayList;
 import javax.swing.JComponent;
 
 /**
  *
  * @author Olivier Hurtubise
  */
-public class Heros extends JComponent implements Runnable {
+public class Heros extends JComponent {
 
-    @Override
+    /*@Override
     public void run() {
         while (true) {
             try {
@@ -27,17 +28,18 @@ public class Heros extends JComponent implements Runnable {
                 Thread.currentThread().interrupt();
             }
         }
-    }
-
+    }*/
     public enum Directions {
         HAUT,
         BAS,
         DROITE,
-        GAUCHE;
+        GAUCHE,
+        AUCUNE;
     }
     private Image img;
-    private Directions directionCourante;
     private Directions blocage = null;
+    private ArrayList<Directions> listeBlocages = new ArrayList<Directions>();
+    private Directions directionCourante;
     private final Image imgHaut;
     private final Image imgBas;
     private final Image imgDroite;
@@ -61,64 +63,69 @@ public class Heros extends JComponent implements Runnable {
         img = imgBasImmobile;
     }
 
-    public void bouger(int hauteur, int largeur, Directions direction) {
-        Monde monde = (Monde) getParent();
-        boolean passe = ((direction == Directions.HAUT && blocage == Directions.BAS) ||
-                (direction == Directions.BAS && blocage == Directions.HAUT) ||
-                (direction == Directions.DROITE && blocage == Directions.GAUCHE) ||
-                (direction == Directions.GAUCHE && blocage == Directions.DROITE));
-        if ((passe) || !monde.verifierContact()) {
-            switch (direction) {
-                case HAUT:
-                    if (getY() > 0) {
-                        setLocation(getX(), getY() - DEPLACEMENT);
-                    } 
-                    img = imgHaut;
-                    break;
-                case BAS:
-                    if (getY() + getHeight() < hauteur) {
-                        setLocation(getX(), getY() + DEPLACEMENT);
-                    }
-                    img = imgBas;
-                    break;
-                case DROITE:
-                    if (getX() + getWidth() < largeur) {
-                        setLocation(getX() + DEPLACEMENT, getY());
-                    }
-                    img = imgDroite;
-                    break;
-                case GAUCHE:
-                    if (getX() > 0) {
-                        setLocation(getX() - DEPLACEMENT, getY());
-                    }
-                    img = imgGauche;
+    public void bouger(int largeur, int hauteur, Directions direction) {
+        if (direction != Directions.AUCUNE) {
+            directionCourante = direction;
+            Monde monde = (Monde) getParent();
+            System.out.println(!listeBlocages.contains(direction)) ;
+                    // && !monde.verifierBlocage()) && !monde.verifierContact());
+            if ((!listeBlocages.contains(direction) 
+                    && !monde.verifierBlocage() && monde.verifierContact())
+                    || !monde.verifierContact()) {
+                switch (direction) {
+                    case HAUT:
+                        if (getY() > 0) {
+                            setLocation(getX(), getY() - DEPLACEMENT);
+                        }
+                        img = imgHaut;
+                        break;
+                    case BAS:
+                        if (getY() + getHeight() < hauteur) {
+                            setLocation(getX(), getY() + DEPLACEMENT);
+                        }
+                        img = imgBas;
+                        break;
+                    case DROITE:
+                        if (getX() + getWidth() < largeur) {
+                            setLocation(getX() + DEPLACEMENT, getY());
+                        }
+                        img = imgDroite;
+                        break;
+                    case GAUCHE:
+                        if (getX() > 0) {
+                            setLocation(getX() - DEPLACEMENT, getY());
+                        }
+                        img = imgGauche;
+                }
+            } else if(monde.verifierBlocage()) {
+                listeBlocages.add(direction);
+            } else if (listeBlocages.isEmpty() && monde.verifierContact()) {
+                listeBlocages.add(direction);
             }
-        } else if (blocage == null && monde.verifierContact()) {
-            blocage = direction;
-        }
-        if (blocage != null && !monde.verifierContact()) {
-            blocage = null;
+            if (!listeBlocages.isEmpty() && !monde.verifierContact()) {
+                listeBlocages.clear();
+            }
+        } else {
+            arreter();
         }
     }
 
     public void arreter() {
-        switch (directionCourante) {
-            case HAUT:
-                img = imgHautImmobile;
-                break;
-            case BAS:
-                img = imgBasImmobile;
-                break;
-            case DROITE:
-                img = imgDroiteImmobile;
-                break;
-            case GAUCHE:
-                img = imgGaucheImmobile;
+        if (directionCourante != null) {
+            switch (directionCourante) {
+                case HAUT:
+                    img = imgHautImmobile;
+                    break;
+                case BAS:
+                    img = imgBasImmobile;
+                    break;
+                case DROITE:
+                    img = imgDroiteImmobile;
+                    break;
+                case GAUCHE:
+                    img = imgGaucheImmobile;
+            }
         }
-    }
-
-    public void setDirectionCourante(Directions direction) {
-        directionCourante = direction;
     }
 
     @Override
