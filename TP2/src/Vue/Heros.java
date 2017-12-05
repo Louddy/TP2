@@ -67,16 +67,11 @@ public class Heros extends JComponent {
         if (direction != Directions.AUCUNE) {
             directionCourante = direction;
             Monde monde = (Monde) getParent();
-            // System.out.println(!listeBlocages.contains(direction));
-            // System.out.println(monde.verifierBlocage());
-            // && !monde.verifierBlocage()) && !monde.verifierContact());
             if (listeBlocages.isEmpty() && monde.verifierContact()) {
-                System.out.println("Ajoutée");
                 listeBlocages.add(direction);
             } else if (monde.verifierBlocage()
                     && !listeBlocages.contains(direction)
                     && listeBlocages.size() < 2) {
-                System.out.println("Pouf");
                 listeBlocages.add(direction);
             } else if (!monde.verifierBlocage() 
                     && listeBlocages.size() == 2) {
@@ -111,7 +106,6 @@ public class Heros extends JComponent {
                 }
             }
             if (!listeBlocages.isEmpty() && !monde.verifierContact()) {
-                System.out.println("Retirée");
                 listeBlocages.clear();
             }
         } else {
