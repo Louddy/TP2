@@ -6,8 +6,10 @@
 package Vue;
 
 import Vue.Heros.Directions;
+import com.sun.glass.events.KeyEvent;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -22,10 +24,24 @@ import javax.swing.JPanel;
  */
 public class Monde extends JPanel {
 
-    private Thread threadBouger;
+    private Thread threadMAJ = new Thread() {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    majJeu();
+                    Thread.sleep(2);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    ex.printStackTrace();
+                }
+            }
+        }
+    };
     private BufferedImage floor;
     private Heros heros;
     private ArrayList<Obstacle> listeObstacles;
+    private ArrayList<Rectangle> listeIntersections = new ArrayList<Rectangle>();
 
     public Monde() {
         try {
@@ -37,6 +53,7 @@ public class Monde extends JPanel {
         placerElements();
         placerHeros();
         this.setLayout(null);
+        threadMAJ.start();
     }
 
     @Override
@@ -81,36 +98,58 @@ public class Monde extends JPanel {
         this.add(heros);
     }
 
-    public void bougerHeros(Directions direction) {
-        heros.setDirectionCourante(direction);
-        threadBouger = new Thread() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(2);
-                        heros.bouger(getHeight(), getWidth(),
-                                heros.getDirectionCourante());
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-            }
-        };
-        threadBouger.start();
-    }
-
     public void arreterHeros() {
-        threadBouger.interrupt();
+        threadMAJ.interrupt();
         heros.arreter();
     }
 
     public boolean verifierContact() {
+        listeIntersections.clear();
         for (Obstacle obstacle : listeObstacles) {
             if (obstacle.getBounds().intersects(heros.getBounds())) {
-                return true;
+                listeIntersections.add(obstacle.getBounds().intersection(heros.getBounds()));
             }
         }
+        return !listeIntersections.isEmpty();
+    }
+
+    public boolean verifierBlocage() {
+        boolean xGrand = false;
+        boolean yGrand = false;
+        /*for (int i = 0; i < listeIntersections.size(); i++) {
+            System.out.println(listeIntersections.get(i));
+        }*/
+        if (!listeIntersections.isEmpty()) {
+            for(Rectangle r: listeIntersections) {
+                if(r.getHeight() > r.getWidth()) {
+                    yGrand = true;
+                } else if(r.getHeight() < r.getWidth()) {
+                    xGrand = true;
+                }
+            }
+            return yGrand && xGrand;
+        }
         return false;
+    }
+
+    public void majJeu() {
+        Directions direction = Heros.Directions.AUCUNE;
+        switch (Fenetre.getToucheEnfoncee()) {
+            case KeyEvent.VK_UP:
+                direction = Heros.Directions.HAUT;
+                break;
+            case KeyEvent.VK_DOWN:
+                direction = Heros.Directions.BAS;
+                break;
+            case KeyEvent.VK_RIGHT:
+                direction = Heros.Directions.DROITE;
+                break;
+            case KeyEvent.VK_LEFT:
+                direction = Heros.Directions.GAUCHE;
+                break;
+            case 0:
+                direction = Heros.Directions.AUCUNE;
+        }
+        heros.bouger(getWidth(), getHeight(), direction);
     }
 }

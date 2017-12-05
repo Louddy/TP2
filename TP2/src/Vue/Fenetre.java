@@ -7,6 +7,7 @@ package Vue;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.JFrame;
@@ -32,6 +33,7 @@ public class Fenetre extends JFrame implements Observer {
     private final JMenuItem mnuQuestionMarkAide = new JMenuItem("Aide");
     private final JMenuItem mnuQuestionMarkAPropros = new JMenuItem("À propos");
     private Monde monde = new Monde();
+    private static ArrayList<Integer> listeKeyCodes = new ArrayList<Integer>();
 
     public Fenetre() {
 
@@ -55,24 +57,14 @@ public class Fenetre extends JFrame implements Observer {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if (!fired) {
-                    if (e.getKeyCode() == KeyEvent.VK_UP) {
-                        monde.bougerHeros(Heros.Directions.HAUT);
-                    } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                        monde.bougerHeros(Heros.Directions.BAS);
-                    } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                        monde.bougerHeros(Heros.Directions.DROITE);
-                    } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                        monde.bougerHeros(Heros.Directions.GAUCHE);
-                    }
-                    fired = true;
+                if (!listeKeyCodes.contains(e.getKeyCode())) {
+                    listeKeyCodes.add(e.getKeyCode());
                 }
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                monde.arreterHeros();
-                fired = false;
+                listeKeyCodes.remove(new Integer(e.getKeyCode()));
             }
         });
 
@@ -82,6 +74,14 @@ public class Fenetre extends JFrame implements Observer {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setVisible(true);
+    }
+
+    public static Integer getToucheEnfoncee() {
+        if (listeKeyCodes.size() != 0) {
+            return listeKeyCodes.get(0);
+        } else {
+            return 0;
+        }
     }
 
     @Override
