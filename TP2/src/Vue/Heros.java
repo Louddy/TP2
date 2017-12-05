@@ -67,10 +67,22 @@ public class Heros extends JComponent {
         if (direction != Directions.AUCUNE) {
             directionCourante = direction;
             Monde monde = (Monde) getParent();
-            System.out.println(!listeBlocages.contains(direction)) ;
-                    // && !monde.verifierBlocage()) && !monde.verifierContact());
-            if ((!listeBlocages.contains(direction) 
-                    && !monde.verifierBlocage() && monde.verifierContact())
+            // System.out.println(!listeBlocages.contains(direction));
+            // System.out.println(monde.verifierBlocage());
+            // && !monde.verifierBlocage()) && !monde.verifierContact());
+            if (listeBlocages.isEmpty() && monde.verifierContact()) {
+                System.out.println("Ajoutée");
+                listeBlocages.add(direction);
+            } else if (monde.verifierBlocage()
+                    && !listeBlocages.contains(direction)
+                    && listeBlocages.size() < 2) {
+                System.out.println("Pouf");
+                listeBlocages.add(direction);
+            } else if (!monde.verifierBlocage() 
+                    && listeBlocages.size() == 2) {
+                listeBlocages.remove(1);
+            } else if ((monde.verifierContact()
+                    && !listeBlocages.contains(direction))
                     || !monde.verifierContact()) {
                 switch (direction) {
                     case HAUT:
@@ -97,12 +109,9 @@ public class Heros extends JComponent {
                         }
                         img = imgGauche;
                 }
-            } else if(monde.verifierBlocage()) {
-                listeBlocages.add(direction);
-            } else if (listeBlocages.isEmpty() && monde.verifierContact()) {
-                listeBlocages.add(direction);
             }
             if (!listeBlocages.isEmpty() && !monde.verifierContact()) {
+                System.out.println("Retirée");
                 listeBlocages.clear();
             }
         } else {
