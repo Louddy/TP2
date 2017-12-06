@@ -73,7 +73,7 @@ public class Heros extends JComponent {
                     && !listeBlocages.contains(direction)
                     && listeBlocages.size() < 2) {
                 listeBlocages.add(direction);
-            } else if (!monde.verifierBlocage() 
+            } else if (!monde.verifierBlocage()
                     && listeBlocages.size() == 2) {
                 listeBlocages.remove(1);
             } else if ((monde.verifierContact()
