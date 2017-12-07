@@ -38,7 +38,7 @@ public class Heros extends JComponent {
     }
     private Image img;
     private Directions blocage = null;
-    private ArrayList<Directions> listeBlocages = new ArrayList<Directions>();
+    private final ArrayList<Directions> listeBlocages = new ArrayList<>();
     private Directions directionCourante;
     private final Image imgHaut;
     private final Image imgBas;
