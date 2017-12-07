@@ -15,8 +15,8 @@ import java.awt.Toolkit;
  */
 public class PasFin extends Ennemi{
     private Image img;
-    private Image Front=Toolkit.getDefaultToolkit().getImage("Images/bleufront.gif");
-    private Image Back=Toolkit.getDefaultToolkit().getImage("Images/bleuback.gif");
+    private static Image Front=Toolkit.getDefaultToolkit().getImage("Images/bleufront.gif");
+    private static Image Back=Toolkit.getDefaultToolkit().getImage("Images/bleuback.gif");
     public PasFin() {
         super();
     }

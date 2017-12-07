@@ -15,7 +15,7 @@ import javax.swing.*;
 public class Ennemi extends JComponent {
     private int vitesseX=0;
     private int vitesseY=0;
-    private int skip=0;
+    
     private Image img;
     private Image Front;
     private Image Back;
