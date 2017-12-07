@@ -17,6 +17,9 @@ import javax.swing.JComponent;
  */
 public class Heros extends JComponent {
 
+    private int vitesseX;
+    private int vitesseY;
+
     /*@Override
     public void run() {
         while (true) {
@@ -48,7 +51,7 @@ public class Heros extends JComponent {
     private final Image imgBasImmobile;
     private final Image imgDroiteImmobile;
     private final Image imgGaucheImmobile;
-    private final int DEPLACEMENT = 1;
+    private final int DEPLACEMENT = 4;
 
     public Heros() {
         final Toolkit tk = Toolkit.getDefaultToolkit();
@@ -63,56 +66,89 @@ public class Heros extends JComponent {
         img = imgBasImmobile;
     }
 
-    public void bouger(int largeur, int hauteur, Directions direction) {
-        if (direction != Directions.AUCUNE) {
-            directionCourante = direction;
-            Monde monde = (Monde) getParent();
-            if (listeBlocages.isEmpty() && monde.verifierContact()) {
-                listeBlocages.add(direction);
-            } else if (monde.verifierBlocage()
-                    && !listeBlocages.contains(direction)
-                    && listeBlocages.size() < 2) {
-                listeBlocages.add(direction);
-            } else if (!monde.verifierBlocage() 
-                    && listeBlocages.size() == 2) {
-                listeBlocages.remove(1);
-            } else if ((monde.verifierContact()
-                    && !listeBlocages.contains(direction))
-                    || !monde.verifierContact()) {
-                switch (direction) {
-                    case HAUT:
-                        if (getY() > 0) {
-                            setLocation(getX(), getY() - DEPLACEMENT);
-                        }
-                        img = imgHaut;
-                        break;
-                    case BAS:
-                        if (getY() + getHeight() < hauteur) {
-                            setLocation(getX(), getY() + DEPLACEMENT);
-                        }
-                        img = imgBas;
-                        break;
-                    case DROITE:
-                        if (getX() + getWidth() < largeur) {
-                            setLocation(getX() + DEPLACEMENT, getY());
-                        }
-                        img = imgDroite;
-                        break;
-                    case GAUCHE:
-                        if (getX() > 0) {
-                            setLocation(getX() - DEPLACEMENT, getY());
-                        }
-                        img = imgGauche;
-                }
-            }
-            if (!listeBlocages.isEmpty() && !monde.verifierContact()) {
-                listeBlocages.clear();
-            }
-        } else {
-            arreter();
-        }
+//    public void bouger(int largeur, int hauteur, Directions direction) {
+//        if (direction != Directions.AUCUNE) {
+//            directionCourante = direction;
+//            Monde monde = (Monde) getParent();
+//            if (listeBlocages.isEmpty() && monde.verifierContact()) {
+//                listeBlocages.add(direction);
+//            } else if (monde.verifierBlocage()
+//                    && !listeBlocages.contains(direction)
+//                    && listeBlocages.size() < 2) {
+//                listeBlocages.add(direction);
+//            } else if (!monde.verifierBlocage()
+//                    && listeBlocages.size() == 2) {
+//                listeBlocages.remove(1);
+//            } else if ((monde.verifierContact()
+//                    && !listeBlocages.contains(direction))
+//                    || !monde.verifierContact()) {
+//                switch (direction) {
+//                    case HAUT:
+//                        if (getY() > 0) {
+//                            setLocation(getX(), getY() - DEPLACEMENT);
+//                        }
+//                        img = imgHaut;
+//                        break;
+//                    case BAS:
+//                        if (getY() + getHeight() < hauteur) {
+//                            setLocation(getX(), getY() + DEPLACEMENT);
+//                        }
+//                        img = imgBas;
+//                        break;
+//                    case DROITE:
+//                        if (getX() + getWidth() < largeur) {
+//                            setLocation(getX() + DEPLACEMENT, getY());
+//                        }
+//                        img = imgDroite;
+//                        break;
+//                    case GAUCHE:
+//                        if (getX() > 0) {
+//                            setLocation(getX() - DEPLACEMENT, getY());
+//                        }
+//                        img = imgGauche;
+//                }
+//            }
+//            if (!listeBlocages.isEmpty() && !monde.verifierContact()) {
+//                listeBlocages.clear();
+//            }
+//        } else {
+//            arreter();
+//        }
+//    }
+public void bouger() {
+        setLocation(getX() + vitesseX, getY() + vitesseY);
+        vitesseX=0;
+        vitesseY=0;
+    }
+    
+
+    public void bougerDroite() {
+        vitesseX = DEPLACEMENT;
+        img = imgDroite;
+        directionCourante = Directions.DROITE;
     }
 
+    public void bougerGauche() {
+        vitesseX = DEPLACEMENT*-1;
+        img = imgGauche;
+        directionCourante = Directions.GAUCHE;
+    }
+
+    public void bougerHaut() {
+        vitesseY = DEPLACEMENT*-1;
+        img = imgHaut;
+        directionCourante = Directions.HAUT;
+        
+    }
+
+    public void bougerBas() {
+        vitesseY = DEPLACEMENT;
+        img = imgBas;
+        directionCourante = Directions.BAS;
+    }
+    
+    
+    
     public void arreter() {
         if (directionCourante != null) {
             switch (directionCourante) {
