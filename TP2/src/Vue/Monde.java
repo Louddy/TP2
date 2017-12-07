@@ -28,6 +28,7 @@ public class Monde extends JPanel {
     private List<Ennemi> ennemis = new ArrayList<>();
     private BufferedImage floor;
     private Heros heros;
+    private collisionHitBox cHitBox = new collisionHitBox();
 
     private int skip = 0;
     private int skip2 = 0;
@@ -43,7 +44,7 @@ public class Monde extends JPanel {
             while (true) {
                 try {
                     majJeu();
-                    Thread.sleep(3);
+                    Thread.sleep(15);
                     repaint();
                     revalidate();
                 } catch (InterruptedException ex) {
@@ -64,7 +65,7 @@ public class Monde extends JPanel {
         listeObstacles = new ArrayList<Obstacle>();
         placerElements();
         placerHeros();
-
+        
         threadMAJ.start();
     }
 
@@ -94,7 +95,7 @@ public class Monde extends JPanel {
                     this.add(entite);
                     listeObstacles.add(entite);
                 } else if (j > 0 && j < 17 && i > 0 && i < 25
-                        && rand.nextInt(100) == 3 && i != 16 && j != 8) {
+                        && rand.nextInt(10) == 3 && i != 16 && j != 8) {
                     entite = new Buisson();
                     entite.setBounds(i * 32, j * 32, 32, 32);
                     this.add(entite);
@@ -106,8 +107,11 @@ public class Monde extends JPanel {
 
     private void placerHeros() {
         heros = new Heros();
+        //5 de + pour obtacles
         heros.setBounds(16 * 32, 8 * 32, 22, 51);
+        cHitBox.setBounds(16 * 32, 8 * 32, 22, 51);
         this.add(heros);
+        this.add(cHitBox);
     }
 
 //    public void arreterHeros() {
@@ -120,13 +124,13 @@ public class Monde extends JPanel {
 //        this.add(mechant);
 //    }
     public boolean verifierContact() {
-        listeIntersections.clear();
+        
         for (Obstacle obstacle : listeObstacles) {
-            if (obstacle.getBounds().intersects(heros.getBounds())) {
-                listeIntersections.add(obstacle.getBounds().intersection(heros.getBounds()));
+            if (obstacle.getBounds().intersects(cHitBox.getBounds())) {
+                return true;
             }
         }
-        return !listeIntersections.isEmpty();
+        return false;
     }
 
     public boolean verifierBlocage() {
@@ -183,8 +187,8 @@ public class Monde extends JPanel {
                 ennemi.setBack();
 
             }
-
-            bougerEnnemi(ennemi);
+            ennemi.bouger();
+            //bougerEnnemi(ennemi);
         }
 
     }
@@ -205,25 +209,51 @@ public class Monde extends JPanel {
         Directions direction = Heros.Directions.AUCUNE;
         switch (Fenetre.getToucheEnfoncee()) {
             case KeyEvent.VK_UP:
-                direction = Heros.Directions.HAUT;
+                
+                cHitBox.bougerHaut();
+                cHitBox.bouger();
+                if(verifierContact()){
+                    cHitBox.setLocation(heros.getLocation());
+                }else{
+               
+                heros.bougerHaut();}
+                
                 break;
             case KeyEvent.VK_DOWN:
-                direction = Heros.Directions.BAS;
+                cHitBox.bougerBas();
+                cHitBox.bouger();
+                if(verifierContact()){
+                    cHitBox.setLocation(heros.getLocation());
+                }else{
+                heros.bougerBas();}
                 break;
             case KeyEvent.VK_RIGHT:
-                direction = Heros.Directions.DROITE;
+                cHitBox.bougerDroite();
+                cHitBox.bouger();
+                if(verifierContact()){
+                    cHitBox.setLocation(heros.getLocation());
+                }else{
+                heros.bougerDroite();}
                 break;
             case KeyEvent.VK_LEFT:
-                direction = Heros.Directions.GAUCHE;
+                cHitBox.bougerGauche();
+                cHitBox.bouger();
+                if(verifierContact()){
+                    
+                    cHitBox.setLocation(heros.getLocation());
+                }else{
+                heros.bougerGauche();}
                 break;
             case 0:
-                direction = Heros.Directions.AUCUNE;
+                heros.arreter();
         }
-        heros.bouger(getWidth(), getHeight(), direction);
+        
+        heros.bouger();
+        //heros.bouger(getWidth(), getHeight(), direction);
     }
 
     private void spawnEnnemis() {
-        System.out.println("debut");
+        
         //ici on souhaite cree un systeme pour choisir un mur au hasard 
         //dependament du niveau on en choisira un certain nombre
         // on insteau la valeur -1 puisque 0 sera utilise comme mur
@@ -233,10 +263,10 @@ public class Monde extends JPanel {
         wall[2] = false;
         wall[3] = false;
         level = (timer / 5) + 1;
-        System.out.println(level);
+        
         Random r = new Random();
         wall[r.nextInt(4)] = true;
-        System.out.println("premier wall");
+        
         if (level >= 3) {
             boolean bool = false;
             do {
@@ -244,7 +274,7 @@ public class Monde extends JPanel {
                 if (!wall[temp]) {
                     wall[temp] = true;
                     bool = true;
-                    System.out.println("deuxieme wall");
+                    
                 }
             } while (!bool);
         }
@@ -255,7 +285,7 @@ public class Monde extends JPanel {
                 if (!wall[temp]) {
                     wall[temp] = true;
                     bool = true;
-                    System.out.println("troisieme wall");
+                    
                 }
             } while (!bool);
         }
@@ -264,13 +294,13 @@ public class Monde extends JPanel {
             for (int i = 0; i < 4; i++) {
                 wall[i] = true;
             }
-            System.out.println("dernier");
+            
         }
 
         //On spawn les monstres au(x) mur(s) choisi
-        System.out.println("xd");
+        
         for (int i = 0; i < 4; i++) {
-            
+
             if (wall[i]) {
                 switch (i) {
 
@@ -297,7 +327,7 @@ public class Monde extends JPanel {
     }
 
     private void timer() {
-        if (skip2 == 1000) {
+        if (skip2 == 200) {
             timer++;
             spawnEnnemis();
             skip2 = 0;
@@ -313,12 +343,12 @@ public class Monde extends JPanel {
         if (level >= 2) {
             ennemis.add(new PasFin());
             this.add(ennemis.get(ennemis.size() - 1));
-            ennemis.get(ennemis.size() - 1).setBounds(x+35, y, w, h);
+            ennemis.get(ennemis.size() - 1).setBounds(x + 35, y, w, h);
         }
         if (level >= 5) {
             ennemis.add(new TroubleFete());
             this.add(ennemis.get(ennemis.size() - 1));
-            ennemis.get(ennemis.size() - 1).setBounds(x-35, y, w, h);
+            ennemis.get(ennemis.size() - 1).setBounds(x - 35, y, w, h);
 
         }
     }
