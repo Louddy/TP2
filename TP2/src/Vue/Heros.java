@@ -17,21 +17,6 @@ import javax.swing.JComponent;
  */
 public class Heros extends JComponent {
 
-    private int vitesseX;
-    private int vitesseY;
-
-    /*@Override
-    public void run() {
-        while (true) {
-            try {
-                Thread.sleep(2);
-                bouger(this.getParent().getHeight(), this.getParent().getWidth(),
-                        directionCourante);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-        }
-    }*/
     public enum Directions {
         HAUT,
         BAS,
@@ -40,8 +25,6 @@ public class Heros extends JComponent {
         AUCUNE;
     }
     private Image img;
-    private Directions blocage = null;
-    private ArrayList<Directions> listeBlocages = new ArrayList<Directions>();
     private Directions directionCourante;
     private final Image imgHaut;
     private final Image imgBas;
@@ -66,89 +49,31 @@ public class Heros extends JComponent {
         img = imgBasImmobile;
     }
 
-//    public void bouger(int largeur, int hauteur, Directions direction) {
-//        if (direction != Directions.AUCUNE) {
-//            directionCourante = direction;
-//            Monde monde = (Monde) getParent();
-//            if (listeBlocages.isEmpty() && monde.verifierContact()) {
-//                listeBlocages.add(direction);
-//            } else if (monde.verifierBlocage()
-//                    && !listeBlocages.contains(direction)
-//                    && listeBlocages.size() < 2) {
-//                listeBlocages.add(direction);
-//            } else if (!monde.verifierBlocage()
-//                    && listeBlocages.size() == 2) {
-//                listeBlocages.remove(1);
-//            } else if ((monde.verifierContact()
-//                    && !listeBlocages.contains(direction))
-//                    || !monde.verifierContact()) {
-//                switch (direction) {
-//                    case HAUT:
-//                        if (getY() > 0) {
-//                            setLocation(getX(), getY() - DEPLACEMENT);
-//                        }
-//                        img = imgHaut;
-//                        break;
-//                    case BAS:
-//                        if (getY() + getHeight() < hauteur) {
-//                            setLocation(getX(), getY() + DEPLACEMENT);
-//                        }
-//                        img = imgBas;
-//                        break;
-//                    case DROITE:
-//                        if (getX() + getWidth() < largeur) {
-//                            setLocation(getX() + DEPLACEMENT, getY());
-//                        }
-//                        img = imgDroite;
-//                        break;
-//                    case GAUCHE:
-//                        if (getX() > 0) {
-//                            setLocation(getX() - DEPLACEMENT, getY());
-//                        }
-//                        img = imgGauche;
-//                }
-//            }
-//            if (!listeBlocages.isEmpty() && !monde.verifierContact()) {
-//                listeBlocages.clear();
-//            }
-//        } else {
-//            arreter();
-//        }
-//    }
-public void bouger() {
-        setLocation(getX() + vitesseX, getY() + vitesseY);
-        vitesseX=0;
-        vitesseY=0;
-    }
-    
-
     public void bougerDroite() {
-        vitesseX = DEPLACEMENT;
+        setLocation(getX() + DEPLACEMENT, getY());
         img = imgDroite;
         directionCourante = Directions.DROITE;
     }
 
     public void bougerGauche() {
-        vitesseX = DEPLACEMENT*-1;
+        setLocation(getX() - DEPLACEMENT, getY());
         img = imgGauche;
         directionCourante = Directions.GAUCHE;
     }
 
     public void bougerHaut() {
-        vitesseY = DEPLACEMENT*-1;
+        setLocation(getX(), getY() - DEPLACEMENT);
         img = imgHaut;
         directionCourante = Directions.HAUT;
-        
+
     }
 
     public void bougerBas() {
-        vitesseY = DEPLACEMENT;
+        setLocation(getX(), getY() + DEPLACEMENT);
         img = imgBas;
         directionCourante = Directions.BAS;
     }
-    
-    
-    
+
     public void arreter() {
         if (directionCourante != null) {
             switch (directionCourante) {
@@ -165,6 +90,8 @@ public void bouger() {
                     img = imgGaucheImmobile;
             }
         }
+        invalidate();
+        repaint();
     }
 
     @Override

@@ -17,6 +17,7 @@ import javax.swing.JComponent;
  * @author Olivier Hurtubise
  */
 public abstract class Obstacle extends JComponent {
+
     private BufferedImage obstacle;
 
     public Obstacle(File fichier) {
@@ -26,6 +27,7 @@ public abstract class Obstacle extends JComponent {
             System.out.println("Erreur IO");
         }
     }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);

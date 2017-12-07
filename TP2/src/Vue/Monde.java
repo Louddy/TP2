@@ -5,10 +5,9 @@
  */
 package Vue;
 
-import Vue.Heros.Directions;
 import com.sun.glass.events.KeyEvent;
-import java.awt.BorderLayout;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -25,10 +24,9 @@ import javax.swing.JPanel;
  */
 public class Monde extends JPanel {
 
-    private List<Ennemi> ennemis = new ArrayList<>();
+    private ArrayList<Ennemi> ennemis = new ArrayList<>();
     private BufferedImage floor;
     private Heros heros;
-    private collisionHitBox cHitBox = new collisionHitBox();
 
     private int skip = 0;
     private int skip2 = 0;
@@ -36,7 +34,6 @@ public class Monde extends JPanel {
     private int level = 1;
 
     private ArrayList<Obstacle> listeObstacles;
-    private ArrayList<Rectangle> listeIntersections = new ArrayList<Rectangle>();
 
     private Thread threadMAJ = new Thread() {
         @Override
@@ -65,7 +62,7 @@ public class Monde extends JPanel {
         listeObstacles = new ArrayList<Obstacle>();
         placerElements();
         placerHeros();
-        
+
         threadMAJ.start();
     }
 
@@ -95,7 +92,7 @@ public class Monde extends JPanel {
                     this.add(entite);
                     listeObstacles.add(entite);
                 } else if (j > 0 && j < 17 && i > 0 && i < 25
-                        && rand.nextInt(10) == 3 && i != 16 && j != 8) {
+                        && rand.nextInt(100) == 3 && i != 16 && j != 8) {
                     entite = new Buisson();
                     entite.setBounds(i * 32, j * 32, 32, 32);
                     this.add(entite);
@@ -109,9 +106,7 @@ public class Monde extends JPanel {
         heros = new Heros();
         //5 de + pour obtacles
         heros.setBounds(16 * 32, 8 * 32, 22, 51);
-        cHitBox.setBounds(16 * 32, 8 * 32, 22, 51);
         this.add(heros);
-        this.add(cHitBox);
     }
 
 //    public void arreterHeros() {
@@ -123,34 +118,33 @@ public class Monde extends JPanel {
 //        mechant.setBounds(8 * 32, 8 * 32, 35, 42);
 //        this.add(mechant);
 //    }
-    public boolean verifierContact() {
-        
+    private boolean verifierContactObstacleHeros() {
+
         for (Obstacle obstacle : listeObstacles) {
-            if (obstacle.getBounds().intersects(cHitBox.getBounds())) {
+            if (obstacle.getBounds().intersects(heros.getBounds())) {
                 return true;
             }
         }
         return false;
     }
-
-    public boolean verifierBlocage() {
-        boolean xGrand = false;
-        boolean yGrand = false;
-        /*for (int i = 0; i < listeIntersections.size(); i++) {
-            System.out.println(listeIntersections.get(i));
-        }*/
-        if (!listeIntersections.isEmpty()) {
-            for (Rectangle r : listeIntersections) {
-                if (r.getHeight() > r.getWidth()) {
-                    yGrand = true;
-                } else if (r.getHeight() < r.getWidth()) {
-                    xGrand = true;
+    
+    private boolean verifierContactTentacule (Ennemi tentaculeComparee) {
+        for (Ennemi tentacule: ennemis) {
+            if(tentacule != tentaculeComparee) {
+                if(tentaculeComparee.getBounds().intersects(tentacule.getBounds())) {
+                    return true;
                 }
             }
-            return yGrand && xGrand;
+        }
+        for (Obstacle obstacle: listeObstacles) {
+            if(tentaculeComparee.getBounds().intersects(obstacle.getBounds())) {
+                return true;
+            }
         }
         return false;
     }
+    
+    
 
     public void majJeu() {
         bougerhero();
@@ -163,37 +157,47 @@ public class Monde extends JPanel {
         //Si le monstre atteint le joueur, il disparait
         //reste a gerer la perte de coeur
         for (Ennemi ennemi : ennemis) {
+            Point locationOriginale = new Point(ennemi.getLocation());
             if (ennemi.getBounds().intersects(heros.getBounds())) {
                 remove(ennemi);
             }
             //Logique de la poursuite des monstres
             if (heros.getX() > ennemi.getX()) {
                 ennemi.bougerDroite();
+                if(verifierContactTentacule(ennemi)) {
+                    ennemi.setLocation(locationOriginale);
+                }
                 ennemi.setFront();
-
             }
+            locationOriginale = new Point(ennemi.getLocation());
             if (heros.getX() < ennemi.getX()) {
                 ennemi.bougerGauche();
                 ennemi.setFront();
-
+                if(verifierContactTentacule(ennemi)) {
+                    ennemi.setLocation(locationOriginale);
+                }
             }
+            locationOriginale = new Point(ennemi.getLocation());
             if (heros.getY() > ennemi.getY()) {
                 ennemi.bougerBas();
                 ennemi.setFront();
-
+                if(verifierContactTentacule(ennemi)) {
+                    ennemi.setLocation(locationOriginale);
+                }
             }
+            locationOriginale = new Point(ennemi.getLocation());
             if (heros.getY() < ennemi.getY()) {
                 ennemi.bougerHaut();
                 ennemi.setBack();
-
+                if(verifierContactTentacule(ennemi)) {
+                    ennemi.setLocation(locationOriginale);
+                }
             }
-            ennemi.bouger();
-            //bougerEnnemi(ennemi);
         }
 
     }
 
-    private void bougerEnnemi(Ennemi ennemi) {
+    /*private void bougerEnnemi(Ennemi ennemi) {
 
         if (skip == 3) {
             ennemi.bouger();
@@ -203,57 +207,45 @@ public class Monde extends JPanel {
             skip++;
         }
 
-    }
+    }*/
 
     private void bougerhero() {
-        Directions direction = Heros.Directions.AUCUNE;
+        Point locationOriginale = new Point(heros.getLocation());
         switch (Fenetre.getToucheEnfoncee()) {
             case KeyEvent.VK_UP:
-                
-                cHitBox.bougerHaut();
-                cHitBox.bouger();
-                if(verifierContact()){
-                    cHitBox.setLocation(heros.getLocation());
-                }else{
-               
-                heros.bougerHaut();}
-                
+                heros.bougerHaut();
+                if(verifierContactObstacleHeros()) {
+                    heros.setLocation(locationOriginale);
+                }
                 break;
             case KeyEvent.VK_DOWN:
-                cHitBox.bougerBas();
-                cHitBox.bouger();
-                if(verifierContact()){
-                    cHitBox.setLocation(heros.getLocation());
-                }else{
-                heros.bougerBas();}
+                heros.bougerBas();
+                if(verifierContactObstacleHeros()) {
+                    heros.setLocation(locationOriginale);
+                }
                 break;
             case KeyEvent.VK_RIGHT:
-                cHitBox.bougerDroite();
-                cHitBox.bouger();
-                if(verifierContact()){
-                    cHitBox.setLocation(heros.getLocation());
-                }else{
-                heros.bougerDroite();}
+                heros.bougerDroite();
+                if(verifierContactObstacleHeros()) {
+                    heros.setLocation(locationOriginale);
+                }
                 break;
             case KeyEvent.VK_LEFT:
-                cHitBox.bougerGauche();
-                cHitBox.bouger();
-                if(verifierContact()){
-                    
-                    cHitBox.setLocation(heros.getLocation());
-                }else{
-                heros.bougerGauche();}
+                heros.bougerGauche();
+                if(verifierContactObstacleHeros()) {
+                    heros.setLocation(locationOriginale);
+                }
                 break;
             case 0:
                 heros.arreter();
         }
-        
-        heros.bouger();
+
+        // heros.bouger();
         //heros.bouger(getWidth(), getHeight(), direction);
     }
 
     private void spawnEnnemis() {
-        
+
         //ici on souhaite cree un systeme pour choisir un mur au hasard 
         //dependament du niveau on en choisira un certain nombre
         // on insteau la valeur -1 puisque 0 sera utilise comme mur
@@ -263,10 +255,10 @@ public class Monde extends JPanel {
         wall[2] = false;
         wall[3] = false;
         level = (timer / 5) + 1;
-        
+
         Random r = new Random();
         wall[r.nextInt(4)] = true;
-        
+
         if (level >= 3) {
             boolean bool = false;
             do {
@@ -274,7 +266,7 @@ public class Monde extends JPanel {
                 if (!wall[temp]) {
                     wall[temp] = true;
                     bool = true;
-                    
+
                 }
             } while (!bool);
         }
@@ -285,7 +277,7 @@ public class Monde extends JPanel {
                 if (!wall[temp]) {
                     wall[temp] = true;
                     bool = true;
-                    
+
                 }
             } while (!bool);
         }
@@ -294,11 +286,10 @@ public class Monde extends JPanel {
             for (int i = 0; i < 4; i++) {
                 wall[i] = true;
             }
-            
+
         }
 
         //On spawn les monstres au(x) mur(s) choisi
-        
         for (int i = 0; i < 4; i++) {
 
             if (wall[i]) {

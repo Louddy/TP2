@@ -30,7 +30,6 @@ public class Mechant extends Ennemi {
 
     }
 
-    
     public void setFront() {
         img = Front;
     }

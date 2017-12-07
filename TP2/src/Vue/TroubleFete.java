@@ -13,19 +13,23 @@ import java.awt.Toolkit;
  *
  * @author Xavie
  */
-public class TroubleFete extends Ennemi{
+public class TroubleFete extends Ennemi {
+
     private Image img;
-    private Image Front=Toolkit.getDefaultToolkit().getImage("Images/purplefront.gif");
-    private Image Back=Toolkit.getDefaultToolkit().getImage("Images/purpleback.gif");
+    private Image Front = Toolkit.getDefaultToolkit().getImage("Images/purplefront.gif");
+    private Image Back = Toolkit.getDefaultToolkit().getImage("Images/purpleback.gif");
+
     public TroubleFete() {
         super();
     }
-     @Override
+
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(img, 0, 0, this);
 
     }
+
     public void setFront() {
         img = Front;
     }
@@ -33,5 +37,5 @@ public class TroubleFete extends Ennemi{
     public void setBack() {
         img = Back;
     }
-    
+
 }

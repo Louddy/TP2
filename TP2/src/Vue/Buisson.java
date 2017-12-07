@@ -12,8 +12,10 @@ import java.io.File;
  * @author Olivier Hurtubise
  */
 public class Buisson extends Obstacle {
+
     private final static File fichier = new File("Images\\buisson1.gif");
-    public Buisson () {
+
+    public Buisson() {
         super(fichier);
     }
 }
