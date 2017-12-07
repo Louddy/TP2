@@ -1,5 +1,7 @@
 # TP2
-yo a faire:
+Tu peux aussi lire le commit message
+sinon,
+a faire:
 
 finir les monstres ( je m'en occupe)
 
