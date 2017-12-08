@@ -21,6 +21,8 @@ public class Mechant extends Ennemi {
 
     public Mechant() {
         super();
+        DEPLACEMENT = 1;
+        points = 1;
     }
 
     @Override

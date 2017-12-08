@@ -16,11 +16,13 @@ import java.awt.Toolkit;
 public class PasFin extends Ennemi {
 
     private Image img;
+    private int points = 2;
     private static Image Front = Toolkit.getDefaultToolkit().getImage("Images/bleufront.gif");
     private static Image Back = Toolkit.getDefaultToolkit().getImage("Images/bleuback.gif");
 
     public PasFin() {
         super();
+        DEPLACEMENT = 2;
     }
 
     @Override

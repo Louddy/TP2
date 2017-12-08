@@ -21,13 +21,14 @@ public class TroubleFete extends Ennemi {
 
     public TroubleFete() {
         super();
+        vie = 2;
+        points = 3;
     }
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(img, 0, 0, this);
-
     }
 
     @Override

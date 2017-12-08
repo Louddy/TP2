@@ -5,6 +5,7 @@
  */
 package Vue;
 
+import Modele.Controleur;
 import com.sun.glass.events.KeyEvent;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -29,6 +30,7 @@ public class Monde extends JPanel {
     private ArrayList<PowerUp> listePowerUps = new ArrayList<>();
     private BufferedImage floor;
     private Heros heros;
+    private Controleur controleur;
 
     private int skip = 11;
     private int skip2 = 0;
@@ -53,7 +55,8 @@ public class Monde extends JPanel {
         }
     };
 
-    public Monde() {
+    public Monde(Controleur controleur) {
+        this.controleur = controleur;
         this.setLayout(null);
         try {
             floor = ImageIO.read(new File("Images\\floor2.gif"));
@@ -130,8 +133,6 @@ public class Monde extends JPanel {
         }
         for (Obstacle obstacle : listeObstacles) {
             if (tentaculeComparee.getBounds().intersects(obstacle.getBounds())) {
-                tentaculeComparee.setIntersection(tentaculeComparee.getBounds()
-                        .intersection(obstacle.getBounds()));
                 return true;
             }
         }
@@ -143,11 +144,12 @@ public class Monde extends JPanel {
         monsterTracking();
         if (Fenetre.barreEstEnfoncee() && skip > 30) {
             skip = 0;
-            tirer(tempsRestantTripleShot);
+            tirer();
         }
         skip++;
-        bougerLaser();
+        bougerProjectiles();
         collisionLasers();
+        contactPowerUp();
         timer();
     }
 
@@ -162,6 +164,8 @@ public class Monde extends JPanel {
             if (heros.getX() > ennemi.getX()) {
                 ennemi.bougerDroite();
                 if (ennemi.getBounds().intersects(heros.getBounds())) {
+                    controleur.ajouterPoints(ennemi.getPoints());
+                    controleur.ouch();
                     remove(ennemi);
                     listeEnnemisAEnlever.add(ennemi);
                 }
@@ -175,6 +179,8 @@ public class Monde extends JPanel {
                 ennemi.bougerGauche();
                 ennemi.setFront();
                 if (ennemi.getBounds().intersects(heros.getBounds())) {
+                    controleur.ajouterPoints(ennemi.getPoints());
+                    controleur.ouch();
                     remove(ennemi);
                     listeEnnemisAEnlever.add(ennemi);
                 }
@@ -187,6 +193,8 @@ public class Monde extends JPanel {
                 ennemi.bougerBas();
                 ennemi.setFront();
                 if (ennemi.getBounds().intersects(heros.getBounds())) {
+                    controleur.ajouterPoints(ennemi.getPoints());
+                    controleur.ouch();
                     remove(ennemi);
                     listeEnnemisAEnlever.add(ennemi);
                 }
@@ -199,6 +207,8 @@ public class Monde extends JPanel {
                 ennemi.bougerHaut();
                 ennemi.setBack();
                 if (ennemi.getBounds().intersects(heros.getBounds())) {
+                    controleur.ajouterPoints(ennemi.getPoints());
+                    controleur.ouch();
                     remove(ennemi);
                     listeEnnemisAEnlever.add(ennemi);
                 }
@@ -257,7 +267,7 @@ public class Monde extends JPanel {
         //heros.bouger(getWidth(), getHeight(), direction);
     }
 
-    private void tirer(int tempsRestant) {
+    private void tirer() {
         double x;
         double y;
         int xInt;
@@ -266,7 +276,7 @@ public class Monde extends JPanel {
         Rectangle r = heros.getBounds();
         switch (heros.getDirectionCourante()) {
             case HAUT:
-                if (tempsRestant <= 0) {
+                if (tempsRestantTripleShot <= 0) {
                     laser = new Laser(Directions.HAUT);
                     x = r.getX() + r.getWidth() / 2;
                     xInt = (int) x;
@@ -275,27 +285,28 @@ public class Monde extends JPanel {
                     laser.setBounds(xInt, yInt, 5, 50);
                     add(laser);
                     listeProjectiles.add(laser);
-                } else if (tempsRestant > 0) {
+                } else if (tempsRestantTripleShot > 0) {
                     Balle balle1 = new Balle(Directions.HAUT);
-                    Balle balle2 = new Balle(Directions.HAUT);
-                    Balle balle3 = new Balle(Directions.HAUT);
+                    Balle balle2 = new Balle(Directions.HAUT_GAUCHE);
+                    Balle balle3 = new Balle(Directions.HAUT_DROITE);
                     x = r.getX() + r.getWidth() / 2;
                     xInt = (int) x;
                     y = r.getY() + 10;
                     yInt = (int) y;
                     balle1.setBounds(xInt, yInt, 10, 10);
-                    balle2.setBounds(xInt - 20, yInt, 10, 10);
-                    balle3.setBounds(xInt + 20, yInt, 10, 10);
+                    balle2.setBounds(xInt + 20, yInt, 10, 10);
+                    balle3.setBounds(xInt - 20, yInt, 10, 10);
                     add(balle1);
                     add(balle2);
                     add(balle3);
                     listeProjectiles.add(balle1);
                     listeProjectiles.add(balle2);
                     listeProjectiles.add(balle3);
+                    tempsRestantTripleShot--;
                 }
                 break;
             case BAS:
-                if (tempsRestant <= 0) {
+                if (tempsRestantTripleShot <= 0) {
                     laser = new Laser(Directions.BAS);
                     x = r.getX() + r.getWidth() / 2;
                     xInt = (int) x;
@@ -304,27 +315,28 @@ public class Monde extends JPanel {
                     laser.setBounds(xInt, yInt, 5, 50);
                     add(laser);
                     listeProjectiles.add(laser);
-                } else if (tempsRestant > 0) {
+                } else if (tempsRestantTripleShot > 0) {
                     Balle balle1 = new Balle(Directions.BAS);
-                    Balle balle2 = new Balle(Directions.BAS);
-                    Balle balle3 = new Balle(Directions.BAS);
+                    Balle balle2 = new Balle(Directions.BAS_GAUCHE);
+                    Balle balle3 = new Balle(Directions.BAS_DROITE);
                     x = r.getX() + r.getWidth() / 2;
                     xInt = (int) x;
                     y = r.getY() + r.getHeight() + 1;
                     yInt = (int) y;
                     balle1.setBounds(xInt, yInt, 10, 10);
-                    balle2.setBounds(xInt - 20, yInt, 10, 10);
-                    balle3.setBounds(xInt + 20, yInt, 10, 10);
+                    balle2.setBounds(xInt + 20, yInt, 10, 10);
+                    balle3.setBounds(xInt - 20, yInt, 10, 10);
                     add(balle1);
                     add(balle2);
                     add(balle3);
                     listeProjectiles.add(balle1);
                     listeProjectiles.add(balle2);
                     listeProjectiles.add(balle3);
+                    tempsRestantTripleShot--;
                 }
                 break;
             case DROITE:
-                if (tempsRestant > 0) {
+                if (tempsRestantTripleShot <= 0) {
                     laser = new Laser(Directions.DROITE);
                     x = r.getX() + r.getWidth() + 1;
                     xInt = (int) x;
@@ -333,34 +345,55 @@ public class Monde extends JPanel {
                     laser.setBounds(xInt, yInt, 50, 5);
                     add(laser);
                     listeProjectiles.add(laser);
-                } else if (tempsRestant > 0) {
+                } else if (tempsRestantTripleShot > 0) {
                     Balle balle1 = new Balle(Directions.DROITE);
-                    Balle balle2 = new Balle(Directions.DROITE);
-                    Balle balle3 = new Balle(Directions.DROITE);
+                    Balle balle2 = new Balle(Directions.BAS_DROITE);
+                    Balle balle3 = new Balle(Directions.HAUT_DROITE);
                     x = r.getX() + r.getWidth() + 1;
                     xInt = (int) x;
                     y = r.getY() + r.getHeight() / 2;
                     yInt = (int) y;
                     balle1.setBounds(xInt, yInt, 10, 10);
-                    balle2.setBounds(xInt, yInt - 20, 10, 10);
-                    balle3.setBounds(xInt, yInt + 20, 10, 10);
+                    balle2.setBounds(xInt, yInt + 20, 10, 10);
+                    balle3.setBounds(xInt, yInt - 20, 10, 10);
                     add(balle1);
                     add(balle2);
                     add(balle3);
                     listeProjectiles.add(balle1);
                     listeProjectiles.add(balle2);
                     listeProjectiles.add(balle3);
+                    tempsRestantTripleShot--;
                 }
                 break;
             case GAUCHE:
-                laser = new Laser(Directions.GAUCHE);
-                x = r.getX() - 51;
-                xInt = (int) x;
-                y = r.getY() + r.getHeight() / 2;
-                yInt = (int) y;
-                laser.setBounds(xInt, yInt, 50, 5);
-                add(laser);
-                listeProjectiles.add(laser);
+                if (tempsRestantTripleShot <= 0) {
+                    laser = new Laser(Directions.GAUCHE);
+                    x = r.getX() - 51;
+                    xInt = (int) x;
+                    y = r.getY() + r.getHeight() / 2;
+                    yInt = (int) y;
+                    laser.setBounds(xInt, yInt, 50, 5);
+                    add(laser);
+                    listeProjectiles.add(laser);
+                } else if (tempsRestantTripleShot > 0) {
+                    Balle balle1 = new Balle(Directions.GAUCHE);
+                    Balle balle2 = new Balle(Directions.BAS_GAUCHE);
+                    Balle balle3 = new Balle(Directions.HAUT_GAUCHE);
+                    x = r.getX() - 1;
+                    xInt = (int) x;
+                    y = r.getY() + r.getHeight() / 2;
+                    yInt = (int) y;
+                    balle1.setBounds(xInt, yInt, 10, 10);
+                    balle2.setBounds(xInt, yInt + 20, 10, 10);
+                    balle3.setBounds(xInt, yInt - 20, 10, 10);
+                    add(balle1);
+                    add(balle2);
+                    add(balle3);
+                    listeProjectiles.add(balle1);
+                    listeProjectiles.add(balle2);
+                    listeProjectiles.add(balle3);
+                    tempsRestantTripleShot--;
+                }
         }
     }
 
@@ -428,7 +461,7 @@ public class Monde extends JPanel {
         }
     }
 
-    private void bougerLaser() {
+    private void bougerProjectiles() {
         for (Projectile projectile : listeProjectiles) {
             switch (projectile.getDirection()) {
                 case HAUT:
@@ -442,6 +475,19 @@ public class Monde extends JPanel {
                     break;
                 case GAUCHE:
                     projectile.setLocation(projectile.getX() - 6, projectile.getY());
+                    break;
+                case HAUT_DROITE:
+                    projectile.setLocation(projectile.getX() + 6, projectile.getY() - 6);
+                    break;
+                case HAUT_GAUCHE:
+                    projectile.setLocation(projectile.getX() - 6, projectile.getY() - 6);
+                    break;
+                case BAS_DROITE:
+                    projectile.setLocation(projectile.getX() + 6, projectile.getY() + 6);
+                    break;
+                case BAS_GAUCHE:
+                    projectile.setLocation(projectile.getX() - 6, projectile.getY() + 6);
+                    break;
             }
         }
     }
@@ -458,10 +504,14 @@ public class Monde extends JPanel {
             }
             for (Ennemi ennemi : listeEnnemis) {
                 if (projectile.getBounds().intersects(ennemi.getBounds())) {
+                    ennemi.prendreCoup();
                     remove(projectile);
                     listeProjectilesARetirer.add(projectile);
-                    remove(ennemi);
-                    ennemiAEnlever = ennemi;
+                    if (ennemi.getVie() == 0) {
+                        controleur.ajouterPoints(ennemi.getPoints());
+                        remove(ennemi);
+                        ennemiAEnlever = ennemi;
+                    }
                 }
             }
             listeEnnemis.remove(ennemiAEnlever);
@@ -483,10 +533,11 @@ public class Monde extends JPanel {
     }
 
     private void contactPowerUp() {
+        ArrayList<PowerUp> powerUpsARetirer = new ArrayList<>();
         Random rand = new Random();
         int resultat = rand.nextInt(3);
         for (PowerUp powerUp : listePowerUps) {
-            if (heros.getBounds().intersects(heros.getBounds())) {
+            if (powerUp.getBounds().intersects(heros.getBounds())) {
                 switch (resultat) {
                     case 0:
                         for (Ennemi ennemi : listeEnnemis) {
@@ -498,9 +549,15 @@ public class Monde extends JPanel {
                         // Regénérer les coeurs
                         break;
                     case 2:
-
+                        tempsRestantTripleShot = 10;
+                        break;
                 }
+                powerUpsARetirer.add(powerUp);
+                remove(powerUp);
             }
+        }
+        for (PowerUp powerUpARetirer : powerUpsARetirer) {
+            listePowerUps.remove(powerUpARetirer);
         }
     }
 

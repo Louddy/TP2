@@ -5,7 +5,7 @@
  */
 package ca.qc.bdeb.info203.TP2;
 
-import Vue.Fenetre;
+import Modele.Controleur;
 
 /**
  *
@@ -17,7 +17,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Fenetre fenetre = new Fenetre();
+        Controleur controleur = new Controleur();
     }
     
 }

@@ -22,7 +22,7 @@ public class Balle extends Projectile {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.blue);
-        g.fillRect(0, 0, 10, 10);
+        g.fillOval(0, 0, 10, 10);
     }
     
 }

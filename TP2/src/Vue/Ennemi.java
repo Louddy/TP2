@@ -12,14 +12,15 @@ import javax.swing.*;
  *
  * @author Xavie
  */
-public class Ennemi extends JComponent {
+public abstract class Ennemi extends JComponent {
 
-    private int DEPLACEMENT = 1;
+    protected int vie = 1;
+    protected int DEPLACEMENT = 1;
+    protected int points = 0;
 
     private Image img;
     private Image Front;
     private Image Back;
-    private Rectangle intersection;
 
     public Ennemi() {
     }
@@ -48,11 +49,15 @@ public class Ennemi extends JComponent {
         img = Back;
     }
     
-    public void setIntersection(Rectangle rectangle) {
-        intersection = rectangle;
+    public void prendreCoup() {
+        vie--;
     }
     
-    public Rectangle getIntersection() {
-        return intersection;
+    public int getVie() {
+        return vie;
+    }
+    
+    public int getPoints() {
+        return points;
     }
 }
