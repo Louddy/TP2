@@ -8,7 +8,6 @@ package Vue;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.util.ArrayList;
 import javax.swing.JComponent;
 
 /**
@@ -16,14 +15,7 @@ import javax.swing.JComponent;
  * @author Olivier Hurtubise
  */
 public class Heros extends JComponent {
-
-    public enum Directions {
-        HAUT,
-        BAS,
-        DROITE,
-        GAUCHE,
-        AUCUNE;
-    }
+    
     private Image img;
     private Directions directionCourante;
     private final Image imgHaut;
@@ -94,6 +86,10 @@ public class Heros extends JComponent {
         repaint();
     }
 
+    public Directions getDirectionCourante() {
+        return directionCourante;
+    }
+    
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);

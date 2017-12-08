@@ -19,6 +19,7 @@ public class Ennemi extends JComponent {
     private Image img;
     private Image Front;
     private Image Back;
+    private Rectangle intersection;
 
     public Ennemi() {
     }
@@ -45,5 +46,13 @@ public class Ennemi extends JComponent {
 
     public void setBack() {
         img = Back;
+    }
+    
+    public void setIntersection(Rectangle rectangle) {
+        intersection = rectangle;
+    }
+    
+    public Rectangle getIntersection() {
+        return intersection;
     }
 }

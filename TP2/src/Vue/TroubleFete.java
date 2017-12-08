@@ -30,10 +30,12 @@ public class TroubleFete extends Ennemi {
 
     }
 
+    @Override
     public void setFront() {
         img = Front;
     }
 
+    @Override
     public void setBack() {
         img = Back;
     }

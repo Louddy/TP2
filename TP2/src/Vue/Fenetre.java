@@ -34,6 +34,7 @@ public class Fenetre extends JFrame implements Observer {
     private final JMenuItem mnuQuestionMarkAPropros = new JMenuItem("À propos");
     private Monde monde = new Monde();
     private static ArrayList<Integer> listeKeyCodes = new ArrayList<Integer>();
+    private static boolean espaceEnfonce;
 
     public Fenetre() {
 
@@ -53,18 +54,26 @@ public class Fenetre extends JFrame implements Observer {
         this.setJMenuBar(mnuPrincipal);
 
         addKeyListener(new KeyAdapter() {
-            private boolean fired = false;
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if (!listeKeyCodes.contains(e.getKeyCode())) {
+                if (!listeKeyCodes.contains(e.getKeyCode())
+                        && (e.getKeyCode() == KeyEvent.VK_UP
+                        || e.getKeyCode() == KeyEvent.VK_DOWN
+                        || e.getKeyCode() == KeyEvent.VK_RIGHT
+                        || e.getKeyCode() == KeyEvent.VK_LEFT)) {
                     listeKeyCodes.add(e.getKeyCode());
+                } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    espaceEnfonce = true;
                 }
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
                 listeKeyCodes.remove(new Integer(e.getKeyCode()));
+                if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    espaceEnfonce = false;
+                }
             }
         });
 
@@ -82,6 +91,10 @@ public class Fenetre extends JFrame implements Observer {
         } else {
             return 0;
         }
+    }
+
+    public static boolean barreEstEnfoncee() {
+        return espaceEnfonce;
     }
 
     @Override
