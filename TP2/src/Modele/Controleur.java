@@ -31,6 +31,7 @@ public class Controleur {
     
     public void reset() {
         modele = new Modele();
-        fenetre = new Fenetre(this, modele);
+        fenetre.setMonde();
+        
     }
 }

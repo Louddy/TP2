@@ -66,8 +66,8 @@ public class Monde extends JPanel {
         listeObstacles = new ArrayList<Obstacle>();
         placerElements();
         placerHeros();
-
-        threadMAJ.start();
+        nouvellepartie();
+        
     }
 
     @Override
@@ -407,7 +407,7 @@ public class Monde extends JPanel {
         wall[1] = false;
         wall[2] = false;
         wall[3] = false;
-        level = (timer / 5) + 1;
+        level = (timer / 2) + 1;
 
         Random r = new Random();
         wall[r.nextInt(4)] = true;
@@ -586,4 +586,10 @@ public class Monde extends JPanel {
             listeEnnemis.get(listeEnnemis.size() - 1).setBounds(x - 35, y, w, h);
         }
     }
+
+    public void nouvellepartie() {
+        threadMAJ.start();
+    }
+
+    
 }
