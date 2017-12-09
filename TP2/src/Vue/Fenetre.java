@@ -11,6 +11,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -113,7 +115,51 @@ public class Fenetre extends JFrame implements Observer {
             }
         });
 
-        //Jeu
+        mnuFichierNouvellePartie.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+
+                int reply = JOptionPane.showConfirmDialog(
+                        Fenetre.this,
+                        "Voulez-vous commencer une nouvelle partie ?",
+                        "Select an Option",
+                        JOptionPane.YES_NO_OPTION);
+                if (reply == JOptionPane.YES_OPTION) {
+                    controleur.reset();
+
+                } else {
+
+                }
+
+            }
+
+        });
+        mnuFichierQuitter.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+
+                System.exit(0);
+            }
+
+        });
+        mnuQuestionMarkAPropros.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                JOptionPane.showMessageDialog(rootPane, "Olivier Hurtubise et Xavier Généreux \n Date de Création : Vendredi le 8 Décemvbre 2017");
+            }
+
+        });
+        mnuQuestionMarkAide.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                JOptionPane.showMessageDialog(rootPane, "Le combat ultime "
+                        + ": vous contre l’armée de Tentacule Mauve (ses "
+                        + "clones et ses acolytes). Un champ de bataille. "
+                        + "Le sort de l’humanité est entre vos mains. Mais "
+                        + "aucune pression, faites votre possible . \n"
+                        + "Utilisez les flèches pour bouger \n"
+                        + "Espace pour tirez \n");
+            }
+
+        });
         //Sauce
         this.add(pnlPrincipal);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -151,7 +197,14 @@ public class Fenetre extends JFrame implements Observer {
         }
     }
     
-    public void setMonde(Monde monde) {
-        this.monde = monde;
+    public void setMonde() {
+        this.monde = new Monde(controleur);
     }
+
+    public Monde getMonde() {
+        return monde;
+    }
+
+   
+    
 }

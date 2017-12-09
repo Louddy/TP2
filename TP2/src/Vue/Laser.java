@@ -23,9 +23,9 @@ public class Laser extends Projectile {
         super.paintComponent(g);
             g.setColor(Color.red);
         if (direction == Directions.HAUT || direction == Directions.BAS) {
-            g.fillOval(0, 0, 5, 50);
+            g.fillOval(0, 0, 5, 25);
         } else {
-            g.fillOval(0, 0, 50, 5);
+            g.fillOval(0, 0, 25, 5);
         }
     }
 }
