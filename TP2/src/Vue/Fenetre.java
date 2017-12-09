@@ -94,6 +94,10 @@ public class Fenetre extends JFrame implements Observer {
         addKeyListener(new KeyAdapter() {
 
             @Override
+            /**
+             * Ajoute le code de la touche si elle est fléchée.
+             * Sinon indique que la barre d'espace est enfoncée.
+             */
             public void keyPressed(KeyEvent e) {
                 if (!listeKeyCodes.contains(e.getKeyCode())
                         && (e.getKeyCode() == KeyEvent.VK_UP
@@ -107,6 +111,10 @@ public class Fenetre extends JFrame implements Observer {
             }
 
             @Override
+            /**
+             * Retire le code de la touche si elle a été enregistrée par
+             * le programme.
+             */
             public void keyReleased(KeyEvent e) {
                 listeKeyCodes.remove(new Integer(e.getKeyCode()));
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
@@ -167,6 +175,11 @@ public class Fenetre extends JFrame implements Observer {
         setVisible(true);
     }
 
+    /**
+     * 
+     * @return Le code de la dernière touche enfoncée, si aucune touche n'est
+     * enfoncée, 0.
+     */
     public static Integer getToucheEnfoncee() {
         if (listeKeyCodes.size() != 0) {
             return listeKeyCodes.get(0);
@@ -180,6 +193,9 @@ public class Fenetre extends JFrame implements Observer {
     }
 
     @Override
+    /**
+     * Met à jour l'interface lorsque le modèle change.
+     */
     public void update(Observable o, Object arg) {
         lblPoints.setText(modele.getPoints() + " pts");
         vie.setVieRestante(modele.getVie());

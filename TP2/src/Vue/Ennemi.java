@@ -41,14 +41,23 @@ public abstract class Ennemi extends JComponent {
         setLocation(getX(), getY() + DEPLACEMENT);
     }
 
+    /**
+     * Représente la tentacule par une image de face d'elle-même.
+     */
     public void setFront() {
         img = Front;
     }
 
+    /**
+     * Représente la tentacule par une image de face d'elle-même.
+     */
     public void setBack() {
         img = Back;
     }
     
+    /**
+     * Enlève un de vie à la tentacule
+     */
     public void prendreCoup() {
         vie--;
     }

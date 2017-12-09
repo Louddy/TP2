@@ -28,6 +28,10 @@ public class Heros extends JComponent {
     private final Image imgGaucheImmobile;
     private final int DEPLACEMENT = 4;
 
+    /**
+     * Instancie les images représentant les différentes apparences possibles
+     * du héros.
+     */
     public Heros() {
         final Toolkit tk = Toolkit.getDefaultToolkit();
         imgHaut = tk.getImage("Images\\heroback.gif");
@@ -40,19 +44,28 @@ public class Heros extends JComponent {
         imgGaucheImmobile = tk.getImage("Images\\gaucheimmobile.gif");
         img = imgBasImmobile;
     }
-
+    
+    /**
+     * Bouge le héros d'une valeur fixe vers la droite
+     */
     public void bougerDroite() {
         setLocation(getX() + DEPLACEMENT, getY());
         img = imgDroite;
         directionCourante = Directions.DROITE;
     }
 
+    /**
+     * Bouge le héros d'une valeur fixe vers la gauche
+     */
     public void bougerGauche() {
         setLocation(getX() - DEPLACEMENT, getY());
         img = imgGauche;
         directionCourante = Directions.GAUCHE;
     }
 
+    /**
+     * Bouge le héros d'une valeur fixe vers le haut
+     */
     public void bougerHaut() {
         setLocation(getX(), getY() - DEPLACEMENT);
         img = imgHaut;
@@ -60,12 +73,19 @@ public class Heros extends JComponent {
 
     }
 
+    /**
+     * Bouge le héros d'une valeur fixe vers le bas
+     */
     public void bougerBas() {
         setLocation(getX(), getY() + DEPLACEMENT);
         img = imgBas;
         directionCourante = Directions.BAS;
     }
 
+    /**
+     * Remplace le gif représentant le héros par une image fixe selon sa 
+     * direction
+     */
     public void arreter() {
         if (directionCourante != null) {
             switch (directionCourante) {
@@ -86,6 +106,10 @@ public class Heros extends JComponent {
         repaint();
     }
 
+    /**
+     * 
+     * @return Direction actuelle du héros
+     */
     public Directions getDirectionCourante() {
         return directionCourante;
     }

@@ -20,6 +20,9 @@ public class Vie extends JComponent {
     private int vieRestante = 3;
 
     @Override
+    /**
+     * Affiche un certain nombre de coeurs selon la vie restante.
+     */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (vieRestante >= 1) {

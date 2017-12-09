@@ -81,6 +81,10 @@ public class Monde extends JPanel {
         }
     }
 
+    /**
+     * Crée le décors du jeu et enregistre les obstacles dans la liste
+     * qui leur est attitrée.
+     */
     private void placerElements() {
         Random rand = new Random();
         Obstacle entite;
@@ -107,6 +111,9 @@ public class Monde extends JPanel {
         }
     }
 
+    /**
+     * Met le héros en place pour le début de la partie.
+     */
     private void placerHeros() {
         heros = new Heros();
         //5 de + pour obtacles
@@ -114,6 +121,10 @@ public class Monde extends JPanel {
         this.add(heros);
     }
 
+    /**
+     * 
+     * @return Si le héros est en contact avec un obstacle
+     */
     private boolean verifierContactObstacleHeros() {
 
         for (Obstacle obstacle : listeObstacles) {
@@ -124,6 +135,12 @@ public class Monde extends JPanel {
         return false;
     }
 
+    /**
+     * 
+     * @param tentaculeComparee La tentacule individuelle qu'on examine par
+     * rapport aux autres tentacules
+     * @return Si la tentacule touche d'autres tentacules
+     */
     private boolean verifierContactTentacule(Ennemi tentaculeComparee) {
         for (Ennemi tentacule : listeEnnemis) {
             if (tentacule != tentaculeComparee) {
@@ -140,6 +157,9 @@ public class Monde extends JPanel {
         return false;
     }
 
+    /**
+     * Séquence effectuée à répétition pour faire fonctionner le jeu.
+     */
     private void majJeu() {
         bougerhero();
         monsterTracking();
@@ -154,6 +174,10 @@ public class Monde extends JPanel {
         timer();
     }
 
+    /**
+     * Gère le déplacement de tentacules et des conséquences d'une collision
+     * avec le héros.
+     */
     private void monsterTracking() {
         //Si le monstre atteint le joueur, il disparait
         //reste a gerer la perte de coeur
@@ -247,6 +271,9 @@ public class Monde extends JPanel {
         }
     }
 
+    /**
+     * Bouge le héros et établit les restrictions de son déplacement.
+     */
     private void bougerhero() {
         Point locationOriginale = new Point(heros.getLocation());
         switch (Fenetre.getToucheEnfoncee()) {
@@ -282,6 +309,10 @@ public class Monde extends JPanel {
         //heros.bouger(getWidth(), getHeight(), direction);
     }
 
+    /**
+     * Fait apparaître les projectiles appropriés autour du héros selon que le 
+     * triple shot soit activé ou pas.
+     */
     private void tirer() {
         double x;
         double y;
@@ -412,6 +443,11 @@ public class Monde extends JPanel {
         }
     }
 
+    /**
+     * Fait apparaître les ennemis à une certaine intervalle de temps au quatre
+     * côtés de la surface de jeu. Augmente la fréquence des apparitions au fil
+     * du temps.
+     */
     private void spawnEnnemis() {
 
         //ici on souhaite cree un systeme pour choisir un mur au hasard 
@@ -476,6 +512,9 @@ public class Monde extends JPanel {
         }
     }
 
+    /**
+     * Fait bouger les projectiles dans la direction appropriée.
+     */
     private void bougerProjectiles() {
         for (Projectile projectile : listeProjectiles) {
             switch (projectile.getDirection()) {
@@ -507,6 +546,10 @@ public class Monde extends JPanel {
         }
     }
 
+    /**
+     * Gère les collisions des projectiles avec les différentes entités du jeu
+     * et en gère les conséquences.
+     */
     private void collisionLasers() {
         Ennemi ennemiAEnlever = null;
         ArrayList<Projectile> listeProjectilesARetirer = new ArrayList<>();
@@ -558,6 +601,10 @@ public class Monde extends JPanel {
         }
     }
 
+    /**
+     * Gère le contact du héros avec un powerup, et produit les effets appropriés
+     * selon le type du powerup
+     */
     private void contactPowerUp() {
         ArrayList<PowerUp> powerUpsARetirer = new ArrayList<>();
         Random rand = new Random();
@@ -583,6 +630,9 @@ public class Monde extends JPanel {
         }
     }
 
+    /**
+     * Un timer.
+     */
     private void timer() {
         if (skip2 == 200) {
             timer++;
@@ -593,6 +643,13 @@ public class Monde extends JPanel {
         }
     }
 
+    /**
+     * Fait apparaître les ennemis aux endroits spécifiés par les paramètres.
+     * @param x
+     * @param y
+     * @param w
+     * @param h 
+     */
     private void addEnemis(int x, int y, int w, int h) {
         listeEnnemis.add(new Mechant());
         this.add(listeEnnemis.get(listeEnnemis.size() - 1));
@@ -609,6 +666,9 @@ public class Monde extends JPanel {
         }
     }
 
+    /**
+     * Démarre le thread principal au début d'une partie.
+     */
     public void nouvellepartie() {
         threadMAJ.start();
     }
