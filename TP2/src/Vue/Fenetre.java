@@ -181,7 +181,6 @@ public class Fenetre extends JFrame implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println("Allô");
         lblPoints.setText(modele.getPoints() + " pts");
         vie.setVieRestante(modele.getVie());
         if (modele.getVie() <= 0) {

@@ -32,6 +32,9 @@ public class Controleur {
     public void reset() {
         modele = new Modele();
         fenetre.setMonde();
-        
+    }
+    
+    public void resetVie() {
+        modele.resetVie();
     }
 }

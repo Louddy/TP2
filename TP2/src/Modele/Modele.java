@@ -43,4 +43,9 @@ public class Modele extends Observable {
     public int getVie() {
         return vie;
     }
+    
+    public void resetVie() {
+        vie = 3;
+        majObservers();
+    }
 }

@@ -36,6 +36,7 @@ public class Monde extends JPanel {
     private int skip2 = 0;
     private int timer = 0;
     private int level = 1;
+    private boolean collision = false;
     private int tempsRestantTripleShot = 0;
 
     private Thread threadMAJ = new Thread() {
@@ -67,7 +68,7 @@ public class Monde extends JPanel {
         placerElements();
         placerHeros();
         nouvellepartie();
-        
+
     }
 
     @Override
@@ -168,6 +169,7 @@ public class Monde extends JPanel {
                     controleur.ouch();
                     remove(ennemi);
                     listeEnnemisAEnlever.add(ennemi);
+                    collision = true;
                 }
                 if (verifierContactTentacule(ennemi)) {
                     ennemi.setLocation(locationActuelle);
@@ -178,11 +180,12 @@ public class Monde extends JPanel {
             if (heros.getX() < ennemi.getX()) {
                 ennemi.bougerGauche();
                 ennemi.setFront();
-                if (ennemi.getBounds().intersects(heros.getBounds())) {
+                if (ennemi.getBounds().intersects(heros.getBounds()) && !collision) {
                     controleur.ajouterPoints(ennemi.getPoints());
                     controleur.ouch();
                     remove(ennemi);
                     listeEnnemisAEnlever.add(ennemi);
+                    collision = true;
                 }
                 if (verifierContactTentacule(ennemi)) {
                     ennemi.setLocation(locationActuelle);
@@ -192,11 +195,12 @@ public class Monde extends JPanel {
             if (heros.getY() > ennemi.getY()) {
                 ennemi.bougerBas();
                 ennemi.setFront();
-                if (ennemi.getBounds().intersects(heros.getBounds())) {
+                if (ennemi.getBounds().intersects(heros.getBounds()) && !collision) {
                     controleur.ajouterPoints(ennemi.getPoints());
                     controleur.ouch();
                     remove(ennemi);
                     listeEnnemisAEnlever.add(ennemi);
+                    collision = true;
                 }
                 if (verifierContactTentacule(ennemi)) {
                     ennemi.setLocation(locationActuelle);
@@ -206,7 +210,7 @@ public class Monde extends JPanel {
             if (heros.getY() < ennemi.getY()) {
                 ennemi.bougerHaut();
                 ennemi.setBack();
-                if (ennemi.getBounds().intersects(heros.getBounds())) {
+                if (ennemi.getBounds().intersects(heros.getBounds()) && !collision) {
                     controleur.ajouterPoints(ennemi.getPoints());
                     controleur.ouch();
                     remove(ennemi);
@@ -218,10 +222,21 @@ public class Monde extends JPanel {
             }
         }
         for (Ennemi ennemiAEnlever : listeEnnemisAEnlever) {
+            PowerUp powerUp = null;
             if (ennemiAEnlever != null) {
                 Random rand = new Random();
                 if (rand.nextInt(10) == 0) {
-                    PowerUp powerUp = new PowerUp();
+                    switch (rand.nextInt(3)) {
+                        case 0:
+                            powerUp = new ClearScreen();
+                            break;
+                        case 1:
+                            powerUp = new Regen();
+                            break;
+                        case 2:
+                            powerUp = new TripleShot();
+                            break;
+                    }
                     powerUp.setBounds(ennemiAEnlever.getX(),
                             ennemiAEnlever.getY(), 32, 32);
                     add(powerUp);
@@ -237,25 +252,25 @@ public class Monde extends JPanel {
         switch (Fenetre.getToucheEnfoncee()) {
             case KeyEvent.VK_UP:
                 heros.bougerHaut();
-                if (verifierContactObstacleHeros()) {
+                if (verifierContactObstacleHeros() || heros.getY() < 0) {
                     heros.setLocation(locationOriginale);
                 }
                 break;
             case KeyEvent.VK_DOWN:
                 heros.bougerBas();
-                if (verifierContactObstacleHeros()) {
+                if (verifierContactObstacleHeros() || heros.getY() > 494) {
                     heros.setLocation(locationOriginale);
                 }
                 break;
             case KeyEvent.VK_RIGHT:
                 heros.bougerDroite();
-                if (verifierContactObstacleHeros()) {
+                if (verifierContactObstacleHeros() || heros.getX() > 780) {
                     heros.setLocation(locationOriginale);
                 }
                 break;
             case KeyEvent.VK_LEFT:
                 heros.bougerGauche();
-                if (verifierContactObstacleHeros()) {
+                if (verifierContactObstacleHeros() || heros.getX() < 0) {
                     heros.setLocation(locationOriginale);
                 }
                 break;
@@ -517,9 +532,20 @@ public class Monde extends JPanel {
             listeEnnemis.remove(ennemiAEnlever);
         }
         if (ennemiAEnlever != null) {
+            PowerUp powerUp = null;
             Random rand = new Random();
             if (rand.nextInt(10) == 0) {
-                PowerUp powerUp = new PowerUp();
+                switch (rand.nextInt(3)) {
+                    case 0:
+                        powerUp = new ClearScreen();
+                        break;
+                    case 1:
+                        powerUp = new Regen();
+                        break;
+                    case 2:
+                        powerUp = new TripleShot();
+                        break;
+                }
                 powerUp.setBounds(ennemiAEnlever.getX(),
                         ennemiAEnlever.getY(), 32, 32);
                 add(powerUp);
@@ -535,24 +561,20 @@ public class Monde extends JPanel {
     private void contactPowerUp() {
         ArrayList<PowerUp> powerUpsARetirer = new ArrayList<>();
         Random rand = new Random();
-        int resultat = rand.nextInt(3);
         for (PowerUp powerUp : listePowerUps) {
             if (powerUp.getBounds().intersects(heros.getBounds())) {
-                switch (resultat) {
-                    case 0:
-                        for (Ennemi ennemi : listeEnnemis) {
-                            remove(ennemi);
-                        }
-                        listeEnnemis.clear();
-                        break;
-                    case 1:
-                        // Regénérer les coeurs
-                        break;
-                    case 2:
-                        tempsRestantTripleShot = 10;
-                        break;
+                if (powerUp instanceof ClearScreen) {
+                    for (Ennemi ennemi : listeEnnemis) {
+                        remove(ennemi);
+                    }
+                    listeEnnemis.clear();
+                } else if (powerUp instanceof TripleShot) {
+                    tempsRestantTripleShot = 10;
+                } else if(powerUp instanceof Regen) {
+                    controleur.resetVie();
                 }
                 powerUpsARetirer.add(powerUp);
+                controleur.ajouterPoints(5);
                 remove(powerUp);
             }
         }
@@ -591,5 +613,4 @@ public class Monde extends JPanel {
         threadMAJ.start();
     }
 
-    
 }
